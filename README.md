@@ -1,32 +1,37 @@
-# HELLDRIVE
+# HELLDR-VE Feature Pack
 
-Extreme Game Performance Utility.
+This package contains the ten requested feature modules:
 
-## Gereksinim
+1. CrashGuard
+2. OptimizationDiff
+3. ThermalGuard
+4. AutoProfileLauncher
+5. PresetABTester
+6. RecoveryManager
+7. NetworkPerformanceMonitor
+8. OptimizationEventCenter
+9. SmartOptimizer
+10. ProfileExchange
 
-- .NET 8 SDK
-- Windows
-- DirectX bağımlılığı yoktur.
+`HELLDRIVEFeatureHub.cs` provides a small integration container.
 
-## Derleme
+## Integration notes
 
-```powershell
-dotnet restore
-dotnet build -c Release
-```
+Add the `.cs` files to the HELLDRIVE WinForms project. The modules are
+backend services and do not replace the existing MainForm UI.
 
-Tek dosya EXE:
+Suggested MainForm wiring:
 
-```powershell
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
-```
+- Subscribe `OptimizationEventCenter.EventAdded` to the UI event feed.
+- Feed StatsMonitor telemetry into `ThermalGuard`.
+- Use `SmartOptimizer.SelectPreset()` before applying a profile.
+- Register game profiles with `AutoProfileLauncher`.
+- Call `RecoveryManager.Save()` after a known-good optimization.
+- Call `RecoveryManager.Load()` during startup/recovery.
+- Use `ProfileExchange` for import/export.
+- Feed real ping samples from `NetworkPerformanceMonitor` into the session recorder.
+- Use `OptimizationDiff.Compare()` around optimization application.
+- Use `PresetABTester` with actual session reports.
 
-Çıktı:
-
-`bin\Release\net8.0-windows\win-x64\publish\HellDrive.exe`
-
-## Not
-
-Bu prototip profil/arayüz, oyun başlatma, process önceliği ve güvenli yedekleme altyapısını içerir.
-
-Oyunların grafik ayarları birbirinden farklı olduğu için config dosyalarını rastgele değiştirmez. Gerçek 360p/texture/shadow değişiklikleri oyun bazlı adapter sistemiyle eklenmelidir.
+The package intentionally does not silently kill processes, modify game files,
+or invent telemetry values.
